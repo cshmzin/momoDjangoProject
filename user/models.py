@@ -1,7 +1,7 @@
 from django.db import models
 import datetime
 from django.utils.functional import cached_property
-
+from vip.models import Vip
 # Create your models here.
 # unique 设置唯一
 # ImageField:记录文件的路径
@@ -22,6 +22,8 @@ class User(models.Model, ModelMixin):
     avatar = models.CharField(default='无', max_length=256) # 图像
     location = models.CharField(default='无', max_length=32) # 位置
 
+    vip_id = models.IntegerField(default=0)
+
     @cached_property
     # 只读属性,实际上每次调用都是函数。
     def age(self):
@@ -41,6 +43,11 @@ class User(models.Model, ModelMixin):
             my_profile, _ = Profile.objects.get_or_create(id=self.id)
             self.my_profile = my_profile
         return self.my_profile
+
+    @cached_property
+    def vip(self):
+        return Vip.objects.get(level=self.vip_id)
+
 
 
 class Profile(models.Model, ModelMixin):

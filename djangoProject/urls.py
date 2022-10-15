@@ -17,6 +17,7 @@ from django.conf.urls import url
 from django.urls import path
 from user import views as user_api
 from swiper import views as swiper_api
+from vip import views as vip_api
 
 urlpatterns = [
     url(r'^user/verify_code', user_api.get_verify_code),
@@ -30,4 +31,6 @@ urlpatterns = [
     url(r'^swiper/dislike', swiper_api.dislike),
     url(r'^swiper/rewind', swiper_api.rewind),
     url(r'^swiper/friends', swiper_api.friends),
+    url(r'^vip/modify_vip', vip_api.modify_vip),
+    url(r'^vip/get_vip', vip_api.get_vip),
 ]
