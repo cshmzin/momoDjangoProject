@@ -1,24 +1,20 @@
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
-from common.errors import VCODE_ERRORS
+from common.errors import VCODE_ERRORS, PROFILE_ERRORS
 from lib.http import render_json
 from user.logics import send_sms, check_vcode
-from django.core.cache import cache
-import json
-from django.http import JsonResponse
-# Create your views here.
+
 from user.models import User
+from user.forms import ProfileForm
 
 
 def get_verify_code(request):
     # 手机注册
     phonenum = request.GET.get('phonenum')
     send_sms(phonenum)
-    return render_json(None, 0)
+    return render_json(None)
 
 
-@csrf_exempt
 def login(request):
     # 短信验证登录
     phonenum = request.POST.get('phonenum')
@@ -26,20 +22,27 @@ def login(request):
     if check_vcode(phonenum, vcode):
         user, _ = User.objects.get_or_create(phonenum=phonenum)
         request.session['uid'] = user.id
-        age = user.age
-        profile = user.profile.to_dict()
-        print(age, profile)
-        return render_json(user.to_dict(), 0)
+        print(request.session.get('uid'))
+        return render_json(user.to_dict())
     else:
         return render_json(None, VCODE_ERRORS)
 
 def get_profile(request):
     # 获取个人资料
-    pass
+    user = request.user
+    return render_json(user.profile.to_dict())
 
 def modify_profile(request):
     # 修改个人资料
-    pass
+    form = ProfileForm(request.POST)
+    if form.is_valid():
+        user = request.user
+        user.profile.__dict__.update(form.clean())
+        user.profile.save()
+        return render_json(None)
+    else:
+        return render_json(form.errors, PROFILE_ERRORS)
+
 
 def upload_avater(request):
     # 上传头像

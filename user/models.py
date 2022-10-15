@@ -13,7 +13,7 @@ class User(models.Model, ModelMixin):
         ('男', '男'),
         ('女', '女'),
     )
-    nickname = models.CharField(max_length=16, unique=True) # max_length可多一点不要少一点，如果超过会截断
+    nickname = models.CharField(max_length=16, unique=False) # max_length可多一点不要少一点，如果超过会截断
     phonenum = models.CharField(max_length=15, unique=True) #
     sex = models.CharField(default='男', max_length=8, choices=SEX)
     birth_year = models.IntegerField(default=2022)

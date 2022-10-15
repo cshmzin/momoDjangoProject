@@ -16,8 +16,18 @@ Including another URLconf
 from django.conf.urls import url
 from django.urls import path
 from user import views as user_api
+from swiper import views as swiper_api
 
 urlpatterns = [
-    url(r'^user/verify_code/', user_api.get_verify_code),
-    url(r'^user/login/', user_api.login)
+    url(r'^user/verify_code', user_api.get_verify_code),
+    url(r'^user/login', user_api.login),
+    url(r'^user/get_profile', user_api.get_profile),
+    url(r'^user/modify_profile', user_api.modify_profile),
+
+    url(r'^swiper/users', swiper_api.users),
+    url(r'^swiper/like', swiper_api.like),
+    url(r'^swiper/superlike', swiper_api.superlike),
+    url(r'^swiper/dislike', swiper_api.dislike),
+    url(r'^swiper/rewind', swiper_api.rewind),
+    url(r'^swiper/friends', swiper_api.friends),
 ]

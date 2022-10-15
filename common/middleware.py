@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
 
 from lib.http import render_json
@@ -9,8 +10,8 @@ from common import errors
 class AuthMiddlewareMixin(MiddlewareMixin):
     # 用户登陆验证中间价
     WHITE_LIST = [
-        '/api/user/verify',
-        '/api/user/login',
+        '/user/verify',
+        '/user/login',
     ]
     def process_request(self, request):
         # 如果请求的URL在白名单内，直接跳过检查
@@ -27,3 +28,4 @@ class AuthMiddlewareMixin(MiddlewareMixin):
             except User.DoesNotExist:
                 request.session.flush()
         return render_json(None, errors.LOGIN_ERRORS)
+        # return redirect('/user/login/')

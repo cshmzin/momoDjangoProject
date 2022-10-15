@@ -16,7 +16,8 @@ def gen_verify_code(length = 6):
     :param length: 验证码长度
     :return: 验证码
     '''
-    return random.randint(10 ** (length - 1), 10 ** length)
+    # return random.randint(10 ** (length - 1), 10 ** length)
+    return 1
 
 #@call_by_worker
 def send_sms(phonenum):
@@ -28,11 +29,10 @@ def send_sms(phonenum):
     vcode = gen_verify_code()
     cache.set('VerifyCode' + str(phonenum), vcode, 1200)
     print(phonenum, vcode)
-    sms_cfg = SmsConfig.HY_SMS_PARAMS.copy()
-    sms_cfg['content'] = sms_cfg['content'] % vcode
-    sms_cfg['mobile'] = phonenum
-    response = requests.post(SmsConfig.HY_SMS_URL, data = sms_cfg)
-    print(response.json())
+    # sms_cfg = SmsConfig.HY_SMS_PARAMS.copy()
+    # sms_cfg['content'] = sms_cfg['content'] % vcode
+    # sms_cfg['mobile'] = phonenum
+    # response = requests.post(SmsConfig.HY_SMS_URL, data = sms_cfg)
 
 def check_vcode(phonenum, vcode):
     '''
