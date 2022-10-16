@@ -5,6 +5,9 @@ from swiper.models import Friend
 
 # Create your views here.
 from vip.logics import perm_require
+import logging
+
+log = logging.getLogger('inf')
 
 
 def users(request):
@@ -21,6 +24,7 @@ def like(request):
     # 喜欢
     sid = int(request.POST.get('sid'))
     if_matched = like_logic(request.user, sid)
+    log.info(f'{str(request.user.id)} like {str(sid)}')
     return render_json({'if_matched': if_matched})
 
 @perm_require('superlike')
@@ -28,12 +32,14 @@ def superlike(request):
     # 超级喜欢(Vip特权)
     sid = int(request.POST.get('sid'))
     if_matched = superlike_logic(request.user, sid)
+    log.info(f'{str(request.user.id)} superlike {str(sid)}')
     return render_json({'if_matched': if_matched})
 
 def dislike(request):
     # 不喜欢
     sid = int(request.POST.get('sid'))
     dislike_logic(request.user, sid)
+    log.info(f'{str(request.user.id)} dislike {str(sid)}')
     return render_json(None)
 
 @perm_require('rewind')

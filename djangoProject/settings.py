@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -135,3 +135,73 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 使用redis做缓存
+CACHES = {
+    'default':{
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS':{
+            "CLIENT_CLASS": 'django_redis.client.DefaultClient',
+            'PICKLE_VERSION': -1,
+        }
+    }
+}
+
+
+LOGGING = {
+    'version': 1,  # 保留字
+    'disable_existing_loggers': False,  # 是否禁用已经存在的日志实例
+    'formatters': {  # 定义日志的格式
+        'standard': {
+            'format': '[%(asctime)s][%(threadName)s:%(thread)d][task_id:%(name)s][%(filename)s:%(lineno)d]'
+                      '[%(levelname)s][%(message)s]'
+        },
+        'simple': {
+            'format': '[%(levelname)s][%(asctime)s][%(filename)s:%(lineno)d]%(message)s'
+        },
+        'collect': {
+            'format': '%(message)s'
+        }
+    },
+    'handlers': {  # 日志处理程序
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'info': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',  # 保存到文件，根据时间自动切
+            'filename': f'{BASE_DIR}/logs/info.log',  # 日志文件
+            'backupCount': 3,  # 备份数为3 xx.log --> xx.log.2018-08-23_00-00-00 --> xx.log.2018-08-24_00-00-00 --> ...
+            'when': 'D',  # 每天一切， 可选值有S/秒 M/分 H/小时 D/天 W0-W6/周(0=周一) midnight/如果没指定时间就默认在午夜
+            'formatter': 'simple',
+            'encoding': 'utf-8',
+        },
+        'error': {
+            'level': 'WARNING',
+            'class': 'logging.handlers.TimedRotatingFileHandler',  # 保存到文件，自动切
+            'filename': f'{BASE_DIR}/logs/error.log',  # 日志文件
+            'when': 'W0',
+            'backupCount': 5,
+            'formatter': 'standard',
+            'encoding': 'utf-8',
+        }
+    },
+    'loggers': {  # 日志实例
+        'django': {  # 默认的logger应用如下配置
+            'handlers': ['console'],  # 上线之后可以把'console'移除
+        },
+        'inf': {
+            'handlers': ['info'],
+            'propagate': True,
+            'level': 'INFO',
+        },
+        'err': {
+            'handlers': ['error'],
+            'propagate': True,
+            'level': 'WARNING',
+        }
+    },
+}
